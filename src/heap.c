@@ -1,4 +1,4 @@
-#include "heap.h"
+#include "../lib/heap.h"
 
 heap* create_heap()
 {
