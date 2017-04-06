@@ -1,3 +1,4 @@
+#pragma once
 #include "../lib/heap.h"
 
 heap* create_heap()
