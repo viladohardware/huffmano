@@ -118,33 +118,3 @@ void print_heap(heap* heap)
 		else printf("%c: %d\n", heap->node[i]->item, heap->node[i]->frequency);
 	}
 }
-
-huffman_tree* build_huffman_tree(int* freq)
-{
-	int i;
-	huffman_tree* leaf;
-	huffman_tree* root;
-	huffman_tree* right;
-	huffman_tree* left;
-	huffman_tree* parent;
-
-	heap* heap = create_heap();
-
-	for(i = 0; i < 256; i++)
-	{
-		if(freq[i] != 0)
-		{
-			leaf = create_leaf(i, freq[i]);
-			enqueue(heap, leaf);
-		}
-	}
-	while(heap->size > 1 )
-	{
-		left   = dequeue(heap);
-		right  = dequeue(heap);
-		parent = create_parent(left, right);
-		enqueue(heap, parent);
-	}
-	root = dequeue(heap);
-	return root;
-}

@@ -35,4 +35,10 @@ Imprime a árvore de huffman em pré-ordem.
 */
 void print_pre_order (huffman_tree* huffman);
 
+/*
+	Recebe um array de inteiros com a frequência de todos os caracteres da entrada, e retorna a árvore de huffman montada
+*/
+huffman_tree* build_huffman_tree(int* freq);
+
+
 #endif

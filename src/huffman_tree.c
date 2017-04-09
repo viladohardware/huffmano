@@ -49,3 +49,33 @@ void print_pre_order (huffman_tree* huffman)
 		print_pre_order(huffman->right);
 	}
 }
+
+huffman_tree* build_huffman_tree(int* freq)
+{
+	int i;
+	huffman_tree* leaf;
+	huffman_tree* root;
+	huffman_tree* right;
+	huffman_tree* left;
+	huffman_tree* parent;
+
+	heap* heap = create_heap();
+
+	for(i = 0; i < 256; i++)
+	{
+		if(freq[i] != 0)
+		{
+			leaf = create_leaf(i, freq[i]);
+			enqueue(heap, leaf);
+		}
+	}
+	while(heap->size > 1 )
+	{
+		left   = dequeue(heap);
+		right  = dequeue(heap);
+		parent = create_parent(left, right);
+		enqueue(heap, parent);
+	}
+	root = dequeue(heap);
+	return root;
+}

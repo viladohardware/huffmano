@@ -62,11 +62,6 @@ void enqueue(heap *heap, huffman_tree* leaf);
 huffman_tree* dequeue(heap* heap);
 
 /*
-	Recebe um array de inteiros com a frequência de todos os caracteres da entrada, e retorna a árvore de huffman montada
-*/
-huffman_tree* build_huffman_tree(int* freq);
-
-/*
 	Imprime a heap
 */
 void print_heap(heap* heap);
