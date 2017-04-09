@@ -1,7 +1,6 @@
-#ifndef heap_h
-#define heap_h
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef HEAP_H
+#define HEAP_H
+#include "huffman_tree.h"
 #define MAX_SIZE 256
 
 /*
@@ -20,17 +19,17 @@ typedef struct heap
 heap* create_heap();
 
 /*
-	Recebe um indice do array, e retorna o pai do nó correspondente 
+	Recebe um indice do array, e retorna o pai do nó correspondente
 */
 int get_parent_index(heap* heap, int index);
 
 /*
-	Recebe um indice do array, e retorna o filho da esquerda do nó correspondente 
+	Recebe um indice do array, e retorna o filho da esquerda do nó correspondente
 */
 int get_left_index(heap* heap, int index);
 
 /*
-	Recebe um indice do array, e retorna o filho da direita do nó correspondente  
+	Recebe um indice do array, e retorna o filho da direita do nó correspondente
 */
 int get_right_index(heap* heap, int index);
 
