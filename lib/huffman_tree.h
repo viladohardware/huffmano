@@ -23,7 +23,7 @@ huffman_tree* create_leaf(unsigned char item, int frequency);
 
 /*
 Cria um nó com filhos e retorna o seu ponteiro.
- */
+*/
 huffman_tree* create_parent(huffman_tree* left, huffman_tree* right);
 
 /*
@@ -32,9 +32,9 @@ Procura por um elemento na árvore de huffman e retorna o seu ponteiro. Caso nã
 huffman_tree* search(huffman_tree* huffman, unsigned char item);
 
 /*
-Imprime a árvore de huffman em pré-ordem.
+Salva a árvore de huffman em pré-ordem para o cabeçalho.
 */
-void print_pre_order (huffman_tree* huffman);
+void save_pre_order (huffman_tree* huffman, unsigned char* string, int* position);
 
 /*
 Retorna o maior entre dois valores. Usado para calcular a altura da árvore de huffman.

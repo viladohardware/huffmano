@@ -61,19 +61,22 @@ huffman_tree* build_huffman_tree(int* freq)
 	return root;
 }
 
-void trace_path(int item, huffman_tree* root, int bpb, unsigned char* buffer, int buffer_size, int position)
+void trace_path(int item, huffman_tree* root, int* bpb, unsigned char* buffer, int buffer_size, int position)
 {
   static int path_found = 0;
+  static int count = 0;
   if(root == NULL) return;
 
   if(root->item == item && (root->left == NULL && root->right == NULL))
   {
     path_found = 1;
+    bpb[item] = count;
+    count--;
     return;
   }
   else
   {
-    bpb++;
+    count++;
     trace_path(item,root->left,bpb,buffer,buffer_size,position+1);
     if(path_found)
     {
@@ -92,7 +95,7 @@ void trace_path(int item, huffman_tree* root, int bpb, unsigned char* buffer, in
       else
       {
         unset_bit(buffer,position,buffer_size);
-        bpb--;
+        count--;
         return;
       }
     }
@@ -107,7 +110,19 @@ void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer
   {
     if(freq[i] != 0)
     {
-      trace_path(i,root,bpb[i],buffer[i],buffer_size,0);
+      trace_path(i,root,bpb,buffer[i],buffer_size,0);
     }
   }
+}
+
+int sum(int* bpb, int* freq)
+{
+  int i;
+  int sum = 0;
+
+  for(i = 0; i < 256; i++)
+  {
+    if(freq[i] != 0) sum += bpb[i] * freq[i];
+  }
+  return sum;
 }

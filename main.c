@@ -4,7 +4,8 @@
 
 int main(void)
 {
-  char* url = (char*) malloc(sizeof(char) * MAX);
+  unsigned char* nodes = (char*) malloc(sizeof(unsigned char) * MAX);
+  char* url = (char*) malloc(sizeof(char) * 1000);
   FILE* file = NULL;
   encode* encode = new_encode();
   huffman_tree* root = NULL;
@@ -35,6 +36,8 @@ int main(void)
   }
 
   fclose(file);
+  free(url);
+  url = NULL;
   file = NULL;
 
   printf("2 - Contando frequência dos bytes...\n");
@@ -61,6 +64,16 @@ int main(void)
 
   byte_maping(encode->frequency,root,bits_per_byte,map,map_size);
   printf("Mapeamento feito com sucesso.\n\n");
+
+  printf("5 - Gerando cabeçalho...\n");
+  int trash = sum(bits_per_byte,encode->frequency) % 8;
+  int* size_nodes = (int*) malloc(sizeof(int));
+  (*size_nodes) = 0;
+
+  save_pre_order(root,nodes,size_nodes);
+  //unsigned char* header = header();
+  //free(nodes);
+  //nodes = NULL;
 
   return 0;
 }

@@ -40,13 +40,28 @@ huffman_tree* search(huffman_tree* huffman, unsigned char item)
 }
 
 
-void print_pre_order (huffman_tree* huffman)
+void save_pre_order (huffman_tree* huffman, unsigned char* string, int* position)
 {
 	if (huffman != NULL)
 	{
-		printf("%c ", huffman->item);
-		print_pre_order(huffman->left);
-		print_pre_order(huffman->right);
+		if(huffman->item == '*' || huffman->item == '\\')
+		{
+			if(huffman->left == NULL && huffman->right == NULL)
+			{
+				string[(*position)++] = '\\';
+				string[(*position)++] = huffman->item;
+			}
+			else
+			{
+				string[(*position)++] = huffman->item;
+			}
+		}
+		else
+		{
+			string[(*position)++] = huffman->item;
+		}
+		save_pre_order(huffman->left,string,position);
+		save_pre_order(huffman->right,string,position);
 	}
 }
 
