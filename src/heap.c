@@ -1,10 +1,15 @@
-#pragma once
+#include "../lib/huffman_tree.h"
 #include "../lib/heap.h"
 
 heap* create_heap()
 {
+	int i;
 	heap* new_heap = (heap*) malloc(sizeof(heap));
 	new_heap->size = 0;
+	for(i = 1; i <= MAX_SIZE; i++)
+	{
+		new_heap->node[i] = NULL;
+	}
 	return new_heap;
 }
 
@@ -23,14 +28,9 @@ int get_right_index(heap* heap, int index)
 	return (index<<1)+1; 
 }
 
-int item_of(heap *heap, int index)
+void swap(huffman_tree* a, huffman_tree* b)
 {
-	return heap->data[index];
-}
-
-void swap(int* a, int* b)
-{
-	int aux;
+	huffman_tree aux;
 	aux = *a;
 	*a   = *b;
 	*b   = aux;
@@ -42,7 +42,7 @@ void min_heapify(heap *heap, int index)
 	int left_index  = get_left_index (heap ,index);
 	int right_index = get_right_index(heap, index);
 
-	if(left_index <= heap->size && heap->data[left_index] < heap->data[index])
+	if(left_index <= heap->size && heap->node[left_index]->frequency < heap->node[index]->frequency)
 	{
 		lowest = left_index;
 	}
@@ -50,18 +50,18 @@ void min_heapify(heap *heap, int index)
 	{
 		lowest = index;
 	}
-	if(right_index <= heap->size && heap->data[right_index] < heap->data[lowest])
+	if(right_index <= heap->size && heap->node[right_index]->frequency < heap->node[lowest]->frequency)
 	{
 		lowest = right_index;
 	}
-	if(heap->data[index] != heap->data[lowest])
+	if(heap->node[index]->frequency != heap->node[lowest]->frequency)
 	{
-		swap(&heap->data[index], &heap->data[lowest]);
+		swap(heap->node[index], heap->node[lowest]);
 		min_heapify(heap, lowest);
 	}
 }
 
-void enqueue(heap *heap, int item)
+void enqueue(heap *heap, huffman_tree* leaf)
 {
 	if(heap->size >= MAX_SIZE)
 	{
@@ -69,14 +69,14 @@ void enqueue(heap *heap, int item)
 	}
 	else
 	{
-		heap->data[++heap->size] = item;
+		heap->node[++heap->size] = leaf;
 		
 		int key_index = heap->size;
 		int parent_index = get_parent_index(heap, heap->size);
 
-		while(parent_index >= 1 && heap->data[key_index] < heap->data[parent_index] )	
+		while(parent_index >= 1 && heap->node[key_index]->frequency < heap->node[parent_index]->frequency )	
 		{
-			swap(&heap->data[key_index], &heap->data[parent_index]);
+			swap(heap->node[key_index], heap->node[parent_index]);
 		
 			key_index = parent_index;
 
@@ -94,40 +94,57 @@ int is_empty(heap *heap)
 	return 0;
 }
 
-int dequeue(heap* heap)
+huffman_tree* dequeue(heap* heap)
 {
 	if(is_empty(heap))
 	{
 		printf("Heap underflow\n");
-		return -1;
 	}
 	else
 	{
-		int item = heap->data[1];
-		heap->data[1] = heap->data[heap->size];
+		huffman_tree* item = heap->node[1];
+		heap->node[1] = heap->node[heap->size];
 		heap->size--;
 		min_heapify(heap, 1);
 		return item;		
 	}
 }
-
-void heapsort(heap *heap)
-{
-	int i;
-	for(i = heap->size; i >= 2; i--)
-	{
-		swap(&heap->data[1], &heap->data[i]);
-		heap->size--;
-		min_heapify(heap, 1);
-	}
-}
-
 void print_heap(heap* heap)
 {
 	int i;
 	for(i = 1; i <= heap->size; i++)
 	{
-		if(heap->size != i) printf("%d ", heap->data[i]);
-		else printf("%d\n", heap->data[i]);
+		if(heap->size != i) printf("%c: %d ", heap->node[i]->item, heap->node[i]->frequency);
+		else printf("%c: %d\n", heap->node[i]->item, heap->node[i]->frequency);
 	}
+}
+
+huffman_tree* build_huffman_tree(int* freq)
+{
+	int i;
+	huffman_tree* leaf;
+	huffman_tree* root;
+	huffman_tree* right;
+	huffman_tree* left;
+	huffman_tree* parent;
+
+	heap* heap = create_heap();
+
+	for(i = 0; i < 256; i++)
+	{
+		if(freq[i] != 0)
+		{
+			leaf = create_leaf(i, freq[i]);
+			enqueue(heap, leaf);
+		}
+	}
+	while(heap->size > 1 )
+	{
+		left   = dequeue(heap);
+		right  = dequeue(heap);
+		parent = create_parent(left, right);
+		enqueue(heap, parent);
+	}
+	root = dequeue(heap);
+	return root;
 }
