@@ -40,42 +40,38 @@ huffman_tree* search(huffman_tree* huffman, unsigned char item)
 }
 
 
-void print_pre_order (huffman_tree* huffman)
+void save_pre_order (huffman_tree* huffman, unsigned char* string, int* position)
 {
 	if (huffman != NULL)
 	{
-		printf("%c\n", huffman->item);
-		print_pre_order(huffman->left);
-		print_pre_order(huffman->right);
+		if(huffman->item == '*' || huffman->item == '\\')
+		{
+			if(huffman->left == NULL && huffman->right == NULL)
+			{
+				string[(*position)++] = '\\';
+				string[(*position)++] = huffman->item;
+			}
+			else
+			{
+				string[(*position)++] = huffman->item;
+			}
+		}
+		else
+		{
+			string[(*position)++] = huffman->item;
+		}
+		save_pre_order(huffman->left,string,position);
+		save_pre_order(huffman->right,string,position);
 	}
 }
 
-huffman_tree* build_huffman_tree(int* freq)
+int max (int a, int b)
 {
-	int i;
-	huffman_tree* leaf;
-	huffman_tree* root;
-	huffman_tree* right;
-	huffman_tree* left;
-	huffman_tree* parent;
+	return (a > b) ? a:b;
+}
 
-	heap* heap = create_heap();
-
-	for(i = 0; i < 256; i++)
-	{
-		if(freq[i] != 0)
-		{
-			leaf = create_leaf(i, freq[i]);
-			enqueue(heap, leaf);
-		}
-	}
-	while(heap->size > 1 )
-	{
-		left   = dequeue(heap);
-		right  = dequeue(heap);
-		parent = create_parent(left, right);
-		enqueue(heap, parent);
-	}
-	root = dequeue(heap);
-	return root;
+int height (huffman_tree* huffman)
+{
+	if (huffman == NULL) return -1;
+	else return (1 + max(height(huffman->left), height(huffman->right)));
 }

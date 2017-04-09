@@ -2,6 +2,7 @@
 #define HUFFMAN_TREE_H
 #include <stdio.h>
 #include <stdlib.h>
+
 /*
 Define o tipo abstrato 'huffman_tree', cujo a struct contém o item do nó, a frequência do nó no arquivo,
 um ponteiro para o nó filho da esquerda e um ponteiro para o nó filho da direita.
@@ -22,7 +23,7 @@ huffman_tree* create_leaf(unsigned char item, int frequency);
 
 /*
 Cria um nó com filhos e retorna o seu ponteiro.
- */
+*/
 huffman_tree* create_parent(huffman_tree* left, huffman_tree* right);
 
 /*
@@ -31,14 +32,18 @@ Procura por um elemento na árvore de huffman e retorna o seu ponteiro. Caso nã
 huffman_tree* search(huffman_tree* huffman, unsigned char item);
 
 /*
-Imprime a árvore de huffman em pré-ordem.
+Salva a árvore de huffman em pré-ordem para o cabeçalho.
 */
-void print_pre_order (huffman_tree* huffman);
+void save_pre_order (huffman_tree* huffman, unsigned char* string, int* position);
 
 /*
-	Recebe um array de inteiros com a frequência de todos os caracteres da entrada, e retorna a árvore de huffman montada
+Retorna o maior entre dois valores. Usado para calcular a altura da árvore de huffman.
 */
-huffman_tree* build_huffman_tree(int* freq);
+int max (int a, int b);
 
+/*
+Retorna a altura da árvore de huffman.
+*/
+int height (huffman_tree* huffman);
 
 #endif
