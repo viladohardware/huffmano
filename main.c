@@ -8,7 +8,7 @@ int main(void)
   FILE* file = NULL;
   encode* encode = new_encode();
   huffman_tree* root = NULL;
-  int read = 0;
+  int read = 0, i;
 
   while(!read)
   {
@@ -46,7 +46,21 @@ int main(void)
   printf("Árvore de compressão montada com sucesso.\n\n");
 
   printf("4 - Mapeando novos bits do arquivo...\n");
-  //byte_maping(encode,root); fazendo
+  int bits_per_byte[256];
+  memset(bits_per_byte,0,sizeof(int)*256);
+
+  int max_bits = height(root);
+  int map_size = (int) ceil(max_bits/8.0);
+
+  unsigned char* map[256];
+  for(i = 0; i < 256; i++)
+  {
+    map[i] = (unsigned char*) malloc(sizeof(unsigned char) * map_size);
+    memset(map[i],0,sizeof(unsigned char)*map_size);
+  }
+
+  byte_maping(encode->frequency,root,bits_per_byte,map,map_size);
+  printf("Mapeamento feito com sucesso.\n\n");
 
   return 0;
 }

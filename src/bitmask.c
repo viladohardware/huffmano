@@ -1,23 +1,23 @@
 #include "../lib/bitmask.h"
 
-unsigned char shift_left(unsigned char x, int n)
+int is_bit_set(unsigned char* c, int i, int size)
 {
-  return x << n;
+  return (c[i/(size*8)] & 1 << (i%(size*8))) != 0;
 }
 
-unsigned char shift_right(unsigned char x, int n)
+void set_bit(unsigned char* c, int i, int size)
 {
-  return x >> n;
+  c[i/(size*8)] |= 1 << (i%(size*8));
 }
 
-int is_bit_set(unsigned char x, int n)
+void unset_bit(unsigned char* c, int i, int size)
 {
-  unsigned char mask = 1 << n;
-  return mask & x;
+  c[i/(size*8)] &= ~(1 << (i%(size*8)));
 }
 
-unsigned char set_bit(unsigned char x, int n)
+void print_bits(unsigned char* c, int size, int bits)
 {
-  unsigned char mask = 1 << n;
-  return mask | x;
+  int i;
+  for(i = 0; i < bits; i++) printf("%d ",is_bit_set(c,i,size));
+  printf("\n");
 }

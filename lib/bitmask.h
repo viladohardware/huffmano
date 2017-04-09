@@ -2,23 +2,23 @@
 #define BITMASK_H
 
 /*
-  Muda o valor da variavel x em n bits para a esquerda.
+  Verifica se o i-esimo bit está setado. Retorna 1 para setado e 0 para não setado.
 */
-unsigned char shift_left(unsigned char x, int n);
+int is_bit_set(unsigned char* c, int i, int size);
 
 /*
-  Muda o valor da variavel x em n bits para a direita.
+  Seta o i-esimo bit como 1.
 */
-unsigned char shift_right(unsigned char x, int n);
+void set_bit(unsigned char* c, int i, int size);
 
 /*
-  Verifica se o n-esimo bit está setado.
+  Seta o i-esimo bit como 0.
 */
-int is_bit_set(unsigned char x, int n);
+void unset_bit(unsigned char* c, int i, int size);
 
 /*
-  Seta o n-esimo bit.
+  Printa bits de uma série de bytes.
 */
-unsigned char set_bit(unsigned char x, int n);
+void print_bits(unsigned char* c, int size, int bits);
 
 #endif

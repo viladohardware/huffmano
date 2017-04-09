@@ -7,21 +7,18 @@
 
 /*
   Cria o tipo abstrato 'encode' onde a struct contém um buffer com os bytes do arquivo que será comprimido,
-  o tamanho do arquivo (em bytes), a contagem da frequência dos bytes, a representação dos bytes após o huffman e a
-  quantidade de bits para cada representação.
+  o tamanho do arquivo (em bytes) e a contagem da frequência dos bytes.
 */
 typedef struct encode
 {
   unsigned char* buffer;
   int size;
   int frequency[256];
-  unsigned char* byte_maping;
-  int byte_size[256];
 } encode;
 
 /*
-  Cria um novo 'encode', criando um buffer nulo, zerando a frequência dos bytes, a representação dos bytes após o huffman e a
-  quantidade de bits para cada representação. Retorna um ponteiro para o novo encode.
+  Cria um novo 'encode', criando um buffer nulo, zerando a frequência dos bytes e o tamanho do arquivo.
+  Retorna um ponteiro para o novo encode.
 */
 encode* new_encode();
 
@@ -42,13 +39,12 @@ void count_frequency(encode* archive);
 huffman_tree* build_huffman_tree(int* freq);
 
 /*
-  Mapeia uma árvore de Huffman, salvando a nova representação de cada byte após o huffman.
+  Mapeia a nova representação de um byte do arquivo, usando a árvore de huffman.
 */
-void byte_maping(encode* archive, huffman_tree* root);
-
+void trace_path(int item, huffman_tree* root, int bpb, unsigned char* buffer, int buffer_size, int position);
 /*
-Mapeia a nova representação de todos os bytes do arquivo, usando a árvore de huffman.
+  Usando trace_path, mapeia a nova representação de todos os bytes do arquivo.
 */
-void trace_huffman_path(encode* archive, int item, huffman_tree* root);
+void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer, int buffer_size);
 
 #endif
