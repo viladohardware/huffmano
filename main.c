@@ -65,7 +65,20 @@ int main(void)
   byte_maping(encode->frequency,root,bits_per_byte,map,map_size);
   printf("Mapeamento feito com sucesso.\n\n");
 
-  printf("5 - Gerando cabeçalho...\n");
+  /*int k;
+  for(i = 0; i < 256; i++)
+  {
+    if(encode->frequency[i] != 0)
+    {
+      for(k = 0; k < bits_per_byte[i]; k++)
+      {
+        printf("%d ",is_bit_set(map[i],k,map_size));
+      }
+      printf("\n");
+    }
+  }*/
+
+/*  printf("5 - Gerando cabeçalho...\n");
   int trash = sum(bits_per_byte,encode->frequency) % 8;
   trash = 8 - trash;
   int* size_nodes = (int*) malloc(sizeof(int));
@@ -81,7 +94,7 @@ int main(void)
   printf("6 - gerando arquivo-saída...\n");
   int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + (*size_nodes) + 2;
   create_final_file(final_file_size,encode,header,(*size_nodes),map,map_size,bits_per_byte);
-  printf("Arquivo comprimido gerado com sucesso.\n\n");
+  printf("Arquivo comprimido gerado com sucesso.\n\n");*/
 
   return 0;
 }

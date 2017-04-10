@@ -65,11 +65,18 @@ void trace_path(int item, huffman_tree* root, int* bpb, unsigned char* buffer, i
 {
   static int path_found = 0;
   static int count = 0;
+
   if(root == NULL) return;
 
   if(root->item == item && (root->left == NULL && root->right == NULL))
   {
     path_found = 1;
+    int k;
+    for(k = 0; k < count; k++)
+    {
+      printf("%d ",is_bit_set(buffer,k,buffer_size));
+    }
+    printf("\n");
     bpb[item] = count;
     count--;
     return;
@@ -94,7 +101,7 @@ void trace_path(int item, huffman_tree* root, int* bpb, unsigned char* buffer, i
       }
       else
       {
-        unset_bit(buffer,position,buffer_size);
+        if(!path_found) unset_bit(buffer,position,buffer_size);
         count--;
         return;
       }
@@ -111,6 +118,13 @@ void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer
     if(freq[i] != 0)
     {
       trace_path(i,root,bpb,buffer[i],buffer_size,0);
+      printf("-----------------------------\n");
+      int k;
+      for(k = 0; k < bpb[i]; k++)
+      {
+        printf("%d ",is_bit_set(buffer[i],k,buffer_size));
+      }
+      printf("\n\n");
     }
   }
 }
@@ -129,27 +143,26 @@ int sum(int* bpb, int* freq)
 
 void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int map_size,int* bpb)
 {
-  FILE* file = fopen("compressed.huff","ab");
-  if(header != NULL) fwrite(header,1,sn+2,file);
-  else printf("fudeu :/\n");
+  //FILE* file = fopen("compressed.huff","ab");
+  //if(header != NULL) fwrite(header,1,sn+2,file);
+  //else printf("fudeu :/\n");
 
-  unsigned char final_file[ffs-sn-2];
-  memset(final_file,0,sizeof(unsigned char)*(ffs-sn-2));
+  //unsigned char final_file[ffs-sn-2];
+  //memset(final_file,0,sizeof(unsigned char)*(ffs-sn-2));
 
-  int position = 0;
+  //int position = 0;
   int i,j;
 
-  for(i = 0; i < archive->size; i++)
+  for(j = 0; j < 8; j++)
   {
-    for(j = 0; j < bpb[archive->buffer[i]]; j++)
-    {
-      if(is_bit_set(map[archive->buffer[i]],j,map_size))
-      {
-        set_bit(final_file,position++,ffs-sn-2);
-      }
-    }
+    printf("%d ",is_bit_set(map[65],j,map_size));
   }
+  //for(i = 0; i < archive->size; i++)
+  //{
 
-  fwrite(final_file,sizeof(unsigned char),sizeof(final_file),file);
-  fclose(file);
+  //}
+  printf("\n");
+
+  //fwrite(final_file,sizeof(unsigned char),sizeof(final_file),file);
+  //fclose(file);
 }
