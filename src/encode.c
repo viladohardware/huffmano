@@ -126,3 +126,30 @@ int sum(int* bpb, int* freq)
   }
   return sum;
 }
+
+void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int map_size,int* bpb)
+{
+  FILE* file = fopen("compressed.huff","ab");
+  if(header != NULL) fwrite(header,1,sn+2,file);
+  else printf("fudeu :/\n");
+
+  unsigned char final_file[ffs-sn-2];
+  memset(final_file,0,sizeof(unsigned char)*(ffs-sn-2));
+
+  int position = 0;
+  int i,j;
+
+  for(i = 0; i < archive->size; i++)
+  {
+    for(j = 0; j < bpb[archive->buffer[i]]; j++)
+    {
+      if(is_bit_set(map[archive->buffer[i]],j,map_size))
+      {
+        set_bit(final_file,position++,ffs-sn-2);
+      }
+    }
+  }
+
+  fwrite(final_file,sizeof(unsigned char),sizeof(final_file),file);
+  fclose(file);
+}

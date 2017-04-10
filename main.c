@@ -1,5 +1,5 @@
 #include "lib/encode.h"
-
+#include "src/cabecalho.c"
 #define MAX 8192
 
 int main(void)
@@ -67,13 +67,21 @@ int main(void)
 
   printf("5 - Gerando cabeçalho...\n");
   int trash = sum(bits_per_byte,encode->frequency) % 8;
+  trash = 8 - trash;
   int* size_nodes = (int*) malloc(sizeof(int));
   (*size_nodes) = 0;
 
   save_pre_order(root,nodes,size_nodes);
-  //unsigned char* header = header();
-  //free(nodes);
-  //nodes = NULL;
+  unsigned char* header;
+  header = cabecalho(trash,(*size_nodes),nodes);
+  free(nodes);
+  nodes = NULL;
+  printf("Cabeçalho feito com sucesso.\n\n");
+
+  printf("6 - gerando arquivo-saída...\n");
+  int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + (*size_nodes) + 2;
+  create_final_file(final_file_size,encode,header,(*size_nodes),map,map_size,bits_per_byte);
+  printf("Arquivo comprimido gerado com sucesso.\n\n");
 
   return 0;
 }

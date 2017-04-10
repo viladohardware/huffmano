@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-unsigned char set_bit (unsigned char c, int i)
+unsigned char set_bit2 (unsigned char c, int i)
 {
 	unsigned char mask = 1<<i;
 	return mask|c ;
@@ -18,7 +18,7 @@ unsigned char* cabecalho(int trash, int size, unsigned char *array)
 	{
 		if(trash & 1)
 		{
-			set_bit(tree[0], i);
+			set_bit2(tree[0], i);
 		}
 		trash = trash>>1;
 		++i;
@@ -33,7 +33,7 @@ unsigned char* cabecalho(int trash, int size, unsigned char *array)
 		}
 		if(size & 1)
 		{
-			set_bit(tree[k], j);
+			set_bit2(tree[k], j);
 		}
 		size = size>>1;
 		++j;
