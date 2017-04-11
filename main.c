@@ -4,12 +4,9 @@
 
 int main(void)
 {
-  unsigned char* nodes = (char*) malloc(sizeof(unsigned char) * MAX);
+  int i, read = 0;
   char* url = (char*) malloc(sizeof(char) * 1000);
   FILE* file = NULL;
-  encode* encode = new_encode();
-  huffman_tree* root = NULL;
-  int read = 0, i;
 
   while(!read)
   {
@@ -27,6 +24,7 @@ int main(void)
   }
 
   printf("1 - Acessando bytes do arquivo...\n");
+  encode* encode = new_encode();
   picking_bytes(encode,file);
   if(encode->buffer != NULL) printf("Bytes acessados com sucesso.\n\n");
   else
@@ -45,6 +43,7 @@ int main(void)
   printf("Frequência contada com sucesso.\n\n");
 
   printf("3 - Montando árvore de compressão...\n");
+  huffman_tree* root = NULL;
   root = build_huffman_tree(encode->frequency);
   printf("Árvore de compressão montada com sucesso.\n\n");
 
@@ -55,46 +54,36 @@ int main(void)
   int max_bits = height(root);
   int map_size = (int) ceil(max_bits/8.0);
 
-  unsigned char* map[256];
+  unsigned char** map = malloc(sizeof(unsigned char*) * 256);
   for(i = 0; i < 256; i++)
   {
-    map[i] = (unsigned char*) malloc(sizeof(unsigned char) * map_size);
-    memset(map[i],0,sizeof(unsigned char)*map_size);
+    map[i] = malloc(sizeof(unsigned char) * map_size);
+    memset(map[i],0,sizeof(unsigned char) * map_size);
   }
 
-  byte_maping(encode->frequency,root,bits_per_byte,map,map_size);
+  byte_maping(encode->frequency,root,bits_per_byte,map);
   printf("Mapeamento feito com sucesso.\n\n");
 
-  /*int k;
-  for(i = 0; i < 256; i++)
-  {
-    if(encode->frequency[i] != 0)
-    {
-      for(k = 0; k < bits_per_byte[i]; k++)
-      {
-        printf("%d ",is_bit_set(map[i],k,map_size));
-      }
-      printf("\n");
-    }
-  }*/
+  printf("5 - Gerando cabeçalho...\n");
+  unsigned char nodes[MAX];
+  int trash = 8 - (sum(bits_per_byte,encode->frequency) % 8);
+  int size_nodes;
+  size_nodes = 0;
 
-/*  printf("5 - Gerando cabeçalho...\n");
-  int trash = sum(bits_per_byte,encode->frequency) % 8;
-  trash = 8 - trash;
-  int* size_nodes = (int*) malloc(sizeof(int));
-  (*size_nodes) = 0;
+  save_pre_order(root,nodes,&size_nodes);
 
-  save_pre_order(root,nodes,size_nodes);
-  unsigned char* header;
-  header = cabecalho(trash,(*size_nodes),nodes);
-  free(nodes);
-  nodes = NULL;
+  unsigned char header[size_nodes+2];
+  memset(header,0,sizeof(unsigned char)*size_nodes+2);
+  //header = cabecalho(trash,size_nodes,nodes);
+
   printf("Cabeçalho feito com sucesso.\n\n");
 
   printf("6 - gerando arquivo-saída...\n");
-  int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + (*size_nodes) + 2;
-  create_final_file(final_file_size,encode,header,(*size_nodes),map,map_size,bits_per_byte);
-  printf("Arquivo comprimido gerado com sucesso.\n\n");*/
+  int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + size_nodes + 2;
+  printf("Tamanho normal: %d bytes\n",encode->size);
+  printf("Tamanho comprimido: %d bytes\n",final_file_size);
 
+  create_final_file(final_file_size,encode,header,size_nodes,map,bits_per_byte);
+  printf("Arquivo comprimido gerado com sucesso.\n\n");
   return 0;
 }

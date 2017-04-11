@@ -41,21 +41,21 @@ huffman_tree* build_huffman_tree(int* freq);
 /*
   Mapeia a nova representação de um byte do arquivo, usando a árvore de huffman.
 */
-void trace_path(int item, huffman_tree* root, int* bpb, unsigned char* buffer, int buffer_size, int position);
+void trace_path(huffman_tree* root, huffman_tree* first,int item, int position, int* bpb, unsigned char* buffer);
 
 /*
   Usando trace_path, mapeia a nova representação de todos os bytes do arquivo.
 */
-void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer, int buffer_size);
+void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer);
 
 /*
-  Retorna a quantidade final de bits do arquivo-saída.
+  Retorna a quantidade final de bits que o arquivo-saída deve possuir.
 */
 int sum(int* bpb, int* freq);
 
 /*
   Gera o arquivo-final comprimido.
 */
-void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int map_size,int* bpb);
+void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int* bpb);
 
 #endif

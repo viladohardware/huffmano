@@ -34,6 +34,7 @@ void count_frequency(encode* archive)
 huffman_tree* build_huffman_tree(int* freq)
 {
 	int i;
+  int teste = 0;
 	huffman_tree* leaf;
 	huffman_tree* root;
 	huffman_tree* right;
@@ -46,6 +47,7 @@ huffman_tree* build_huffman_tree(int* freq)
 	{
 		if(freq[i] != 0)
 		{
+      teste++;
 			leaf = create_leaf(i, freq[i]);
 			enqueue(heap, leaf);
 		}
@@ -61,71 +63,43 @@ huffman_tree* build_huffman_tree(int* freq)
 	return root;
 }
 
-void trace_path(int item, huffman_tree* root, int* bpb, unsigned char* buffer, int buffer_size, int position)
+void trace_path(huffman_tree* root, huffman_tree* first,int item, int position, int* bpb, unsigned char* buffer)
 {
-  static int path_found = 0;
-  static int count = 0;
-
+  static int found = 0;
   if(root == NULL) return;
 
-  if(root->item == item && (root->left == NULL && root->right == NULL))
+  if(root->item == item && root->left == NULL && root->right == NULL)
   {
-    path_found = 1;
-    int k;
-    for(k = 0; k < count; k++)
-    {
-      printf("%d ",is_bit_set(buffer,k,buffer_size));
-    }
-    printf("\n");
-    bpb[item] = count;
-    count--;
+    found = 1;
     return;
   }
   else
   {
-    count++;
-    trace_path(item,root->left,bpb,buffer,buffer_size,position+1);
-    if(path_found)
+    bpb[item]++;
+    trace_path(root->left,first,item,position+1,bpb,buffer);
+
+    if(!found)
     {
-      path_found = 0;
-      return;
+      set_bit(buffer,position);
+      trace_path(root->right,first,item,position+1,bpb,buffer);
     }
-    else
+    if(!found)
     {
-      set_bit(buffer,position,buffer_size);
-      trace_path(item,root->right,bpb,buffer,buffer_size,position+1);
-      if(path_found)
-      {
-        path_found = 0;
-        return;
-      }
-      else
-      {
-        if(!path_found) unset_bit(buffer,position,buffer_size);
-        count--;
-        return;
-      }
+      unset_bit(buffer,position);
+      bpb[item]--;
     }
   }
+
+  if(root == first && found) found = 0;
 }
 
-void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer, int buffer_size)
+void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer)
 {
   int i;
 
   for(i = 0; i < 256; i++)
   {
-    if(freq[i] != 0)
-    {
-      trace_path(i,root,bpb,buffer[i],buffer_size,0);
-      printf("-----------------------------\n");
-      int k;
-      for(k = 0; k < bpb[i]; k++)
-      {
-        printf("%d ",is_bit_set(buffer[i],k,buffer_size));
-      }
-      printf("\n\n");
-    }
+    if(freq[i] != 0) trace_path(root,root,i,0,bpb,buffer[i]);
   }
 }
 
@@ -141,28 +115,27 @@ int sum(int* bpb, int* freq)
   return sum;
 }
 
-void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int map_size,int* bpb)
+void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int* bpb)
 {
-  //FILE* file = fopen("compressed.huff","ab");
-  //if(header != NULL) fwrite(header,1,sn+2,file);
-  //else printf("fudeu :/\n");
+  int i, j;
+  int position = 0;
 
-  //unsigned char final_file[ffs-sn-2];
-  //memset(final_file,0,sizeof(unsigned char)*(ffs-sn-2));
+  FILE* file = fopen("../../compressed.huff","wb");
+  unsigned char* aux;
 
-  //int position = 0;
-  int i,j;
+  unsigned char* final_file = (unsigned char*) malloc(sizeof(unsigned char) * (ffs-sn-2));
+  memset(final_file,0,sizeof(unsigned char) * (ffs-sn-2));
 
-  for(j = 0; j < 8; j++)
+  for(i = 0; i < archive->size; i++)
   {
-    printf("%d ",is_bit_set(map[65],j,map_size));
+      aux = map[archive->buffer[i]];
+      for(j = 0; j < bpb[archive->buffer[i]]; j++)
+      {
+        if(is_bit_set(aux,j)) set_bit(final_file,position);
+        position++;
+      }
   }
-  //for(i = 0; i < archive->size; i++)
-  //{
-
-  //}
-  printf("\n");
-
-  //fwrite(final_file,sizeof(unsigned char),sizeof(final_file),file);
-  //fclose(file);
+  fwrite(header , sizeof(unsigned char), sn+2, file);
+  fwrite(final_file , sizeof(unsigned char), ffs-sn-2, file);
+  fclose(file);
 }
