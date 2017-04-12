@@ -1,4 +1,3 @@
-#include "../lib/huffman_tree.h"
 #include "../lib/heap.h"
 
 heap* create_heap()
@@ -20,12 +19,12 @@ int get_parent_index(heap* heap, int index)
 
 int get_left_index(heap* heap, int index)
 {
-	return index << 1; 
+	return index << 1;
 }
 
 int get_right_index(heap* heap, int index)
 {
-	return (index<<1)+1; 
+	return (index<<1)+1;
 }
 
 void swap(huffman_tree* a, huffman_tree* b)
@@ -38,7 +37,7 @@ void swap(huffman_tree* a, huffman_tree* b)
 
 void min_heapify(heap *heap, int index)
 {
-	int lowest;																		
+	int lowest;
 	int left_index  = get_left_index (heap ,index);
 	int right_index = get_right_index(heap, index);
 
@@ -70,14 +69,14 @@ void enqueue(heap *heap, huffman_tree* leaf)
 	else
 	{
 		heap->node[++heap->size] = leaf;
-		
+
 		int key_index = heap->size;
 		int parent_index = get_parent_index(heap, heap->size);
 
-		while(parent_index >= 1 && heap->node[key_index]->frequency < heap->node[parent_index]->frequency )	
+		while(parent_index >= 1 && heap->node[key_index]->frequency < heap->node[parent_index]->frequency )
 		{
 			swap(heap->node[key_index], heap->node[parent_index]);
-		
+
 			key_index = parent_index;
 
 			parent_index = get_parent_index(heap, key_index);
@@ -106,9 +105,10 @@ huffman_tree* dequeue(heap* heap)
 		heap->node[1] = heap->node[heap->size];
 		heap->size--;
 		min_heapify(heap, 1);
-		return item;		
+		return item;
 	}
 }
+
 void print_heap(heap* heap)
 {
 	int i;
