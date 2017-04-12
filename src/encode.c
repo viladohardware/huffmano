@@ -115,12 +115,56 @@ int sum(int* bpb, int* freq)
   return sum;
 }
 
+unsigned char* make_header(int trash, int size_nodes, unsigned char* nodes)
+{
+  int i = 5;
+  int k = 1;
+  int size_aux = size_nodes;
+
+  unsigned char* header =  (unsigned char*) malloc((size_nodes+2)*sizeof(unsigned char));
+  memset(header, 0, (size_nodes + 2)*sizeof(unsigned char));
+
+  while(trash != 0)
+  {
+    if(trash & 1)
+    {
+      set_bit_rl(&header[0], i);
+    }
+    trash = trash>>1;
+    ++i;
+  }
+
+  i = 0;
+
+  while(size_aux != 0)
+  {
+    if(i==8)
+    {
+      i = 0;
+      k = 0;
+    }
+    if(size_aux & 1)
+    {
+      set_bit_rl(&header[k], i);
+    }
+    size_aux = size_aux>>1;
+    ++i;
+  }
+
+  for(i=0; i<size_nodes; ++i)
+  {
+    header[i+2] = nodes[i];
+  }
+
+  return header;
+}
+
 void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int* bpb)
 {
   int i, j;
   int position = 0;
 
-  FILE* file = fopen("../../compressed.huff","wb");
+  FILE* file = fopen("compressed.huff","wb");
   unsigned char* aux;
 
   unsigned char* final_file = (unsigned char*) malloc(sizeof(unsigned char) * (ffs-sn-2));
@@ -135,6 +179,7 @@ void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsi
         position++;
       }
   }
+
   fwrite(header , sizeof(unsigned char), sn+2, file);
   fwrite(final_file , sizeof(unsigned char), ffs-sn-2, file);
   fclose(file);

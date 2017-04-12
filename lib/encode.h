@@ -54,6 +54,11 @@ void byte_maping(int* freq, huffman_tree* root, int* bpb, unsigned char** buffer
 int sum(int* bpb, int* freq);
 
 /*
+  Gera o cabeçalho do arquivo-final comprimido.
+*/
+unsigned char* make_header(int trash, int size_nodes, unsigned char* nodes);
+
+/*
   Gera o arquivo-final comprimido.
 */
 void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsigned char** map,int* bpb);
