@@ -1,27 +1,9 @@
 #include "lib/encode.h"
 #define MAX 8192
 
-int main(void)
+void encoding(FILE* file)
 {
-  int i,j, read = 0;
-  char* url = (char*) malloc(sizeof(char) * 1000);
-  FILE* file = NULL;
-
-  while(!read)
-  {
-    printf("Digite o caminho do arquivo:\n");
-    scanf("%s",url);
-    getchar();
-
-    file = fopen(url,"rb");
-    if(file != NULL)
-    {
-      printf("Arquivo carregado com sucesso.\n\n");
-      read = 1;
-    }
-    else printf("Falha ao carregar o arquivo, tente novamente.\n\n");
-  }
-
+  int i;
   printf("1 - Acessando bytes do arquivo...\n");
   encode* encode = new_encode();
   picking_bytes(encode,file);
@@ -33,8 +15,6 @@ int main(void)
   }
 
   fclose(file);
-  free(url);
-  url = NULL;
   file = NULL;
 
   printf("2 - Contando frequência dos bytes...\n");
@@ -80,5 +60,53 @@ int main(void)
   int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + size_nodes + 2;
   create_final_file(final_file_size,encode,header,size_nodes,map,bits_per_byte);
   printf("Arquivo comprimido gerado com sucesso.\n\n");
+  return;
+}
+
+void decoding(FILE* file)
+{
+  return;
+}
+
+int main(void)
+{
+  int read = 0;
+  char* url = (char*) malloc(sizeof(char) * 1000);
+  char  ans;
+  char* mode;
+
+  FILE* file = NULL;
+
+  while(!read)
+  {
+    printf("Digite o caminho do arquivo:\n");
+    scanf("%s",url);
+    getchar();
+
+    file = fopen(url,"rb");
+    if(file != NULL)
+    {
+      printf("Arquivo carregado com sucesso.\n\n");
+
+      mode = strstr(url,".huff");
+      if(mode == NULL) encoding(file);
+      else decoding(file);
+      file = NULL;
+
+      printf("Deseja fazer mais alguma operação? (S/N)\n");
+      scanf("%c",&ans);
+      getchar();
+      printf("\n\n");
+
+      if(ans == 'N') read = 1;
+      else if(ans != 'S')
+      {
+        printf("Comando não reconhecido. Encerrando a aplicação.\n\n");
+        read = 1;
+      }
+    }
+    else printf("Falha ao carregar o arquivo, tente novamente.\n\n");
+  }
+
   return 0;
 }
