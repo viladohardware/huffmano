@@ -1,4 +1,5 @@
 #include "lib/encode.h"
+#include "lib/decode.h"
 #define MAX 8192
 
 void encoding(FILE* file)
@@ -65,6 +66,16 @@ void encoding(FILE* file)
 
 void decoding(FILE* file)
 {
+  printf("1 - Recuperando cabeçalho...\n");
+	int tam_lixo = trash(file);
+  int tam_arvore = tree_size(file);
+	unsigned char *pre_order = pre_order_tree(file, tam_arvore);
+  node* arvore = recovery_tree(pre_order, tam_arvore);
+  printf("Cabeçalho recuperado com sucesso.\n\n");
+  printf("2 - Descompactando arquivo...\n");
+  decode(file, arvore, tam_lixo, tam_arvore);
+	fclose(file);
+  printf("Arquivo descompactado com sucesso.\n\n");
   return;
 }
 
