@@ -1,2 +1,2 @@
-# O Poderoso Huffmano
+# Huffman
 A simple huffman coding project.
