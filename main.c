@@ -15,9 +15,6 @@ void encoding(FILE* file)
     return 0;
   }
 
-  fclose(file);
-  file = NULL;
-
   printf("2 - Contando frequência dos bytes...\n");
   count_frequency(encode);
   printf("Frequência contada com sucesso.\n\n");
@@ -37,8 +34,11 @@ void encoding(FILE* file)
   unsigned char** map = malloc(sizeof(unsigned char*) * 256);
   for(i = 0; i < 256; i++)
   {
-    map[i] = malloc(sizeof(unsigned char) * map_size);
-    memset(map[i],0,sizeof(unsigned char) * map_size);
+    if(encode->frequency[i] > 0)
+    {
+      map[i] = malloc(sizeof(unsigned char) * map_size);
+      memset(map[i],0,sizeof(unsigned char) * map_size);
+    }
   }
 
   byte_maping(encode->frequency,root,bits_per_byte,map);
@@ -46,7 +46,7 @@ void encoding(FILE* file)
 
   printf("5 - Gerando cabeçalho...\n");
   unsigned char nodes[MAX];
-  int trash = 8 - (sum(bits_per_byte,encode->frequency) % 8);
+  int trash = (8 - (sum(bits_per_byte,encode->frequency) % 8))% 8;
   int size_nodes;
   size_nodes = 0;
 
@@ -58,7 +58,7 @@ void encoding(FILE* file)
   printf("Cabeçalho feito com sucesso.\n\n");
 
   printf("6 - gerando arquivo-saída...\n");
-  int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0) + size_nodes + 2;
+  int final_file_size = (int) ceil(sum(bits_per_byte,encode->frequency)/8.0);
   create_final_file(final_file_size,encode,header,size_nodes,map,bits_per_byte);
   printf("Arquivo comprimido gerado com sucesso.\n\n");
   return;
@@ -67,14 +67,13 @@ void encoding(FILE* file)
 void decoding(FILE* file)
 {
   printf("1 - Recuperando cabeçalho...\n");
-	int tam_lixo = trash(file);
-  int tam_arvore = tree_size(file);
-	unsigned char *pre_order = pre_order_tree(file, tam_arvore);
-  node* arvore = recovery_tree(pre_order, tam_arvore);
+	int trash_size = trash(file);
+  int size_tree = tree_size(file);
+	unsigned char *pre_order = pre_order_tree(file, size_tree);
+  node* tree = recovery_tree(pre_order, size_tree);
   printf("Cabeçalho recuperado com sucesso.\n\n");
   printf("2 - Descompactando arquivo...\n");
-  decode(file, arvore, tam_lixo, tam_arvore);
-	fclose(file);
+  decode(file, tree, trash_size);
   printf("Arquivo descompactado com sucesso.\n\n");
   return;
 }
@@ -102,6 +101,7 @@ int main(void)
       mode = strstr(url,".huff");
       if(mode == NULL) encoding(file);
       else decoding(file);
+      fclose(file);
       file = NULL;
 
       printf("Deseja fazer mais alguma operação? (S/N)\n");
@@ -109,8 +109,8 @@ int main(void)
       getchar();
       printf("\n\n");
 
-      if(ans == 'N') read = 1;
-      else if(ans != 'S')
+      if(ans == 'N' || ans == 'n') read = 1;
+      else if(ans != 'S' || ans != 's')
       {
         printf("Comando não reconhecido. Encerrando a aplicação.\n\n");
         read = 1;

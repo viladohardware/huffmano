@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.c src/encode.c src/heap.c src/huffman_tree.c src/bitmask.c src/get_header.c src/rebuild_tree.c src/stack.c lib/encode.h src/decode.c lib/heap.h lib/huffman_tree.h lib/bitmask.h lib/rebuild_tree.h lib/stack.h lib/get_header.h lib/decode.h
+OBJS = main.c src/encode.c src/heap.c src/huffman_tree.c src/bitmask.c src/get_header.c src/stack.c lib/encode.h src/decode.c lib/heap.h lib/huffman_tree.h lib/bitmask.h lib/stack.h lib/get_header.h lib/decode.h
 
 #CC specifies which compiler we're using
 CC = gcc

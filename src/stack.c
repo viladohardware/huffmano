@@ -10,33 +10,33 @@ node* new_node (unsigned char item)
     return temp;
 }
 
-pilha* criar_pilha()
+stack* create_stack()
 {
-	pilha *nova_pilha = (pilha*) malloc(sizeof(pilha));
-	nova_pilha->top = NULL;
-	nova_pilha->size = 0;
-	return nova_pilha;
+	stack *new = (stack*) malloc(sizeof(stack));
+	new->top = NULL;
+	new->size = 0;
+	return new;
 }
 
-void push(pilha *pilha, node *node)
+void push(stack* stack, node *node)
 {
-	node->next = pilha->top;
-	pilha->top = node;
-	pilha->size++;
+	node->next = stack->top;
+	stack->top = node;
+	stack->size++;
 }
 
-node* pop(pilha *pilha)
+node* pop(stack *stack)
 {
-	if (pilha->top == NULL)
+	if (stack->top == NULL)
 	{
 		printf("LISTA VAZIA\n");
 		return NULL;
 	}
 	else
 	{
-		node *aux = pilha->top;
-		pilha->top = pilha->top->next;
-		pilha->size--;
+		node *aux = stack->top;
+		stack->top = stack->top->next;
+		stack->size--;
 		return aux;
 	}
 }

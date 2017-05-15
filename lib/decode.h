@@ -12,6 +12,6 @@ node* recovery_tree(unsigned char array[], int size);
 /*
 	Dado um ponteiro para FILE, a árvore reconstruida, tamanho do lixo e tamanho da Árvore, cria o arquivo descompactado
 */
-void decode(FILE* file, node *raiz, int tam_lixo, int tam_arvore);
+void decode(FILE* file, node *root, int trash_size);
 
 #endif

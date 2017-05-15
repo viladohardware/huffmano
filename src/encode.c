@@ -22,7 +22,11 @@ void picking_bytes(encode* archive, FILE* file)
   archive->buffer = (unsigned char*) malloc(archive->size * sizeof(unsigned char));
   buffer_size = fread(archive->buffer,1,archive->size,file);
 
-  if(buffer_size != archive->size) archive->buffer = NULL;
+  if(buffer_size != archive->size)
+  {
+    free(archive->buffer);
+     archive->buffer = NULL;
+  }
 }
 
 void count_frequency(encode* archive)
@@ -34,7 +38,6 @@ void count_frequency(encode* archive)
 huffman_tree* build_huffman_tree(int* freq)
 {
 	int i;
-  int teste = 0;
 	huffman_tree* leaf;
 	huffman_tree* root;
 	huffman_tree* right;
@@ -47,7 +50,6 @@ huffman_tree* build_huffman_tree(int* freq)
 	{
 		if(freq[i] != 0)
 		{
-      teste++;
 			leaf = create_leaf(i, freq[i]);
 			enqueue(heap, leaf);
 		}
@@ -167,8 +169,8 @@ void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsi
   FILE* file = fopen("compressed.huff","wb");
   unsigned char* aux;
 
-  unsigned char* final_file = (unsigned char*) malloc(sizeof(unsigned char) * (ffs-sn-2));
-  memset(final_file,0,sizeof(unsigned char) * (ffs-sn-2));
+  unsigned char* final_file = (unsigned char*) malloc(sizeof(unsigned char) * ffs);
+  memset(final_file,0,sizeof(unsigned char) * ffs);
 
   for(i = 0; i < archive->size; i++)
   {
@@ -181,6 +183,6 @@ void create_final_file(int ffs,encode* archive,unsigned char* header,int sn,unsi
   }
 
   fwrite(header , sizeof(unsigned char), sn+2, file);
-  fwrite(final_file , sizeof(unsigned char), ffs-sn-2, file);
+  fwrite(final_file , sizeof(unsigned char), ffs, file);
   fclose(file);
 }
